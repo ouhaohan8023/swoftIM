@@ -34,17 +34,15 @@ class ChatModule
 {
     /**
      * @OnOpen()
-     * @param Request $request
-     * @param int     $fd
+     * @param  Request  $request
+     * @param  int  $fd
      */
     public function onOpen(Request $request, int $fd): void
     {
-//        if (UserTokenFd::checkToken($fd)) {
-            server()->push($request->getFd(), "Opened, welcome!(FD: $fd)");
-//        } else {
-//            Show::title('无权限，关闭链接');
-//            server()->disconnect($fd);
-//        }
+        $ctx['type'] = 'system';
+        $ctx['code'] = 200;
+        $ctx['msg'] = '准备建立星际通讯！';
+        server()->push($request->getFd(), json_encode($ctx));
     }
 
     /**
@@ -52,13 +50,15 @@ class ChatModule
      * - you can do something. eg. record log
      *
      * @OnClose()
-     * @param Server $server
-     * @param int    $fd
+     * @param  Server  $server
+     * @param  int  $fd
      */
     public function onClose(Server $server, int $fd): void
     {
-        // you can do something. eg. record log, unbind user...
-        server()->push($fd, "连接已断开");
+        $ctx['type'] = 'system';
+        $ctx['code'] = 500;
+        $ctx['msg'] = '很遗憾，星际通讯已断开！';
+        server()->push($fd, json_encode($ctx));
         UserTokenFd::destroyToken($fd);
     }
 }

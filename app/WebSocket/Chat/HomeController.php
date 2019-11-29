@@ -48,11 +48,14 @@ class HomeController
     {
         $msg = $request->getMessage()->getData();
         $fd = $request->getFd();
+        $ctx['type'] = 'system';
+        $ctx['code'] = 200;
         if (UserTokenFd::bindTokenFD($msg['token'],$fd)) {
-            server()->sendTo($fd,'连接建立成功！');
+            $ctx['msg'] = '连接建立成功！！';
+            server()->sendTo($fd,json_encode($ctx));
         } else {
-            server()->sendTo($fd,'恢复上次链接');
-//            server()->disconnect($fd);
+            $ctx['msg'] = '恢复上次链接！！';
+            server()->sendTo($fd,$ctx);
         }
     }
 
@@ -76,6 +79,7 @@ class HomeController
                     $ctx['user_id'] = $user->getUserId();
                     $ctx['msg'] = $msg['msg'];
                     $ctx['me'] = $token_user_id==$user_id?true:false;
+                    $ctx['time'] = date('Y-m-d H:i:s');
                     $status = server()->sendTo($f,json_encode($ctx));
                 } else {
                     $status = false;
