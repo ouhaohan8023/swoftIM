@@ -58,7 +58,9 @@ class ChatModule
         $ctx['type'] = 'system';
         $ctx['code'] = 500;
         $ctx['msg'] = '很遗憾，星际通讯已断开！';
-        server()->push($fd, json_encode($ctx));
         UserTokenFd::destroyToken($fd);
+        server()->push($fd, json_encode($ctx));
+
+        sendOnLineUserNumberToAll();
     }
 }

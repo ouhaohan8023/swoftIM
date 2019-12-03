@@ -7,6 +7,7 @@ use Swoft\Db\Annotation\Mapping\Column;
 use Swoft\Db\Annotation\Mapping\Entity;
 use Swoft\Db\Annotation\Mapping\Id;
 use Swoft\Db\Eloquent\Model;
+use Swoft\Redis\Redis;
 
 
 /**
@@ -364,6 +365,24 @@ class UserTokenFd extends Model
     {
         $data = self::query()->select('user_id')->where('token',$token)->first();
         return $data;
+    }
+
+    /**
+     * @param  bool  $type true+1，false-1
+     * @return bool|int|mixed
+     */
+    public static function updateOnlineNums($cache = false)
+    {
+        if ($cache) {
+            $num = Redis::get(env('REDIS_ONLINE_USER'));
+            if (!$num) {
+                $num = self::select('user_id')->distinct()->get()->count();
+                Redis::set(env('REDIS_ONLINE_USER'), $num, 60);
+            }
+        } else {
+            $num = self::select('user_id')->distinct()->get()->count();
+        }
+        return $num;
     }
 
 }

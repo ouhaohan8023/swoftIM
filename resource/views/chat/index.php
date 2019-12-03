@@ -198,16 +198,13 @@
       console.log(evt.data,123)
       var jsonData = JSON.parse(evt.data);
       console.log(jsonData,1);
-      if (jsonData.type !== 'system') {
+      if (jsonData.type === 'chat') {
         var name = jsonData.me === true ? '我：' : '用户' + jsonData.user_id + "："
         msg.innerHTML += addMsg(name, jsonData.msg, jsonData.time, jsonData.me) + "<br/>"
+      } else if (jsonData.type === 'number') {
+        PeopleNum.innerHTML = jsonData.msg;
       } else {
         addSystemMsg(jsonData.code,jsonData.msg)
-        // if (evt.data) {
-        //   msg.innerHTML += evt.data + '<br>';
-        // } else {
-        //   PeopleNum.innerHTML = evt.ppp;
-        // }
       }
     }
   };

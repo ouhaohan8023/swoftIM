@@ -12,8 +12,6 @@ namespace App\WebSocket\Chat;
 
 use App\Model\Entity\Msg;
 use App\Model\Entity\UserTokenFd;
-use phpDocumentor\Reflection\Types\Void_;
-use Swoft\Console\Helper\Show;
 use Swoft\Session\Session;
 use Swoft\WebSocket\Server\Annotation\Mapping\MessageMapping;
 use Swoft\WebSocket\Server\Annotation\Mapping\WsController;
@@ -53,6 +51,8 @@ class HomeController
         if (UserTokenFd::bindTokenFD($msg['token'],$fd)) {
             $ctx['msg'] = '连接建立成功！！';
             server()->sendTo($fd,json_encode($ctx));
+
+            sendOnLineUserNumberToAll();
         } else {
             $ctx['msg'] = '恢复上次链接！！';
             server()->sendTo($fd,$ctx);
@@ -76,6 +76,7 @@ class HomeController
             foreach ($group as $f => $user_id) {
                 $user = UserTokenFd::getUserByToken($msg['token']);
                 if (Session::has((string)$f)) {
+                    $ctx['type'] = 'chat';
                     $ctx['user_id'] = $user->getUserId();
                     $ctx['msg'] = $msg['msg'];
                     $ctx['me'] = $token_user_id==$user_id?true:false;

@@ -1,4 +1,7 @@
 <?php
+
+use App\Model\Entity\UserTokenFd;
+
 /**
  * This file is part of Swoft.
  *
@@ -11,4 +14,13 @@
 function user_func(): string
 {
     return 'hello';
+}
+
+function sendOnLineUserNumberToAll()
+{
+    $num = UserTokenFd::updateOnlineNums();
+    $cc['type'] = 'number';
+    $cc['code'] = 200;
+    $cc['msg'] = $num;
+    server()->sendToAll(json_encode($cc));
 }
