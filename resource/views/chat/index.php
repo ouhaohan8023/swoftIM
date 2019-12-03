@@ -16,11 +16,70 @@
           crossorigin="anonymous"></script>
 
   <style>
-    .right {
-      float: right;
+    .msg-list {
+      width: 100%;
     }
-    .media-footer {
-      color: #9E9E9E;
+    .messenger-container {
+      padding: 8px 15px 8px 13px;
+      margin: 0 0 25px 35px;
+      float: left;
+      max-width: 82%;
+      background: aquamarine;
+      border-radius: 10px;
+      min-width: 20%;
+      position: relative; box-sizing: border-box;
+      box-shadow: 7px 10px 6px -5px #BBC0C7;
+    }
+    .messenger-container p {
+      color: #3D3D3D;
+      font-size: 12px;
+      margin-bottom: 6px;
+      line-height: 18px;
+      word-wrap: break-word; margin: 0;
+    }
+    .sender .messenger-container {
+      float: right;
+      margin-right: 35px;
+      width: auto;
+      background: gold;
+      margin-left: 0px;
+      padding: 8px 15px 8px 13px;
+    }
+    .clear {
+      clear:both;
+      width: 100%;
+      padding: 0px !important;
+      margin: 0px;
+      height:5px;
+    }
+    .messenger-container::before {
+      width: 0px;
+      height: 0px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+
+      border-right:15px solid aquamarine;
+      content: "";
+      position: absolute;
+      top: 9px;
+      left: -15px;
+    }
+    .sender .messenger-container::before {
+      width: 0px;
+      height: 0px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 15px solid gold;
+      content: "";
+      position: absolute;
+      top: 9px;
+      left: 99%;border-right: none;
+    }
+    .msg-icon {
+      float: left;
+    }
+    .msg-icon-right {
+      float: right;
     }
   </style>
 </head>
@@ -97,21 +156,27 @@
 
   function song() {
     var text = document.getElementById('text').value;
-    document.getElementById('text').value = '';
-    //向服务器发送数据
-    var msg = {
-      "cmd": "home.echo",
-      "data": {
-        "token": "<?= $token;?>",
-        "msg": text,
-        'channel_id': "<?= $channel_id;?>"
-      },
-      "ext": {
-        "ip": '127.0.0.1'
+    text_without_br=text.replace(/\n/g,"")
+    console.log(text_without_br,text_without_br !== '',text_without_br !== null,1)
+    if (text_without_br && text_without_br !== '' && text_without_br !== null ) {
+      document.getElementById('text').value = '';
+      text=text.replace(/\n/g,"<br/>")
+
+      //向服务器发送数据
+      var msg = {
+        "cmd": "home.echo",
+        "data": {
+          "token": "<?= $token;?>",
+          "msg": text,
+          'channel_id': "<?= $channel_id;?>"
+        },
+        "ext": {
+          "ip": '127.0.0.1'
+        }
       }
+      console.log(JSON.stringify(msg))
+      websocket.send(JSON.stringify(msg));
     }
-    console.log(JSON.stringify(msg))
-    websocket.send(JSON.stringify(msg));
   }
 
   //监听连接关闭
@@ -164,32 +229,25 @@
 
   function addMsg(name, content, time, me) {
     if (me) {
-      var html = '<div class="media">\n' +
-        '          <div class="media-body text-right">\n' +
-        '            <h5 class="media-heading">'+name+'</h5>\n' +
-        '            '+content+'\n' + '<div class="media-footer">'+time+'\n'+'</div>'
+      var html = '<div class="msg-list sender">\n' +
+        '          <div class="msg-icon-right">\n' +
+        '            <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PCEtLQpTb3VyY2UgVVJMOiBob2xkZXIuanMvNjR4NjQKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNmViNjRhN2ZiMSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE2ZWI2NGE3ZmIxIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSIxMy4wNzgxMjUiIHk9IjM2LjM2ODc1Ij42NHg2NDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==">\n' +
         '          </div>\n' +
-        '          <div class="media-right">\n' +
-        '            <a href="#">\n' +
-        '              <img class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PCEtLQpTb3VyY2UgVVJMOiBob2xkZXIuanMvNjR4NjQKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNmViNjRhN2ZiMSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE2ZWI2NGE3ZmIxIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSIxMy4wNzgxMjUiIHk9IjM2LjM2ODc1Ij42NHg2NDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;">\n' +
-        '            </a>\n' +
+        '          <div class="messenger-container">\n' +
+        '            <p>'+ content +'</p>\n' +
         '          </div>\n' +
-        '        </div>'
+        '        </div>\n' +
+        '        <div class="clear"></div>'
     } else {
-      var html = '<div class="media">\n' +
-        '          <div class="media-left">\n' +
-        '            <a href="#">\n' +
-        '              <img class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PCEtLQpTb3VyY2UgVVJMOiBob2xkZXIuanMvNjR4NjQKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNmViNjRhN2ZiMSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE2ZWI2NGE3ZmIxIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSIxMy4wNzgxMjUiIHk9IjM2LjM2ODc1Ij42NHg2NDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;">\n' +
-        '            </a>\n' +
+      var html = '<div class="msg-list">\n' +
+        '          <div class="msg-icon">\n' +
+        '            <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PCEtLQpTb3VyY2UgVVJMOiBob2xkZXIuanMvNjR4NjQKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNmViNjRhN2ZiMSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE2ZWI2NGE3ZmIxIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSIxMy4wNzgxMjUiIHk9IjM2LjM2ODc1Ij42NHg2NDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==">\n' +
         '          </div>\n' +
-        '          <div class="media-body">\n' +
-        '            <h5 class="media-heading">' + name + '</h5>\n' +
-        '            ' + content + '\n' +
-        '            <div class="media-footer">\n' +
-        '                '+time+'\n' +
-        '            </div>'
+        '          <div class="messenger-container">\n' +
+        '            <p>' + content + '</p>\n' +
         '          </div>\n' +
-        '        </div>'
+        '        </div>\n' +
+        '        <div class="clear"></div>'
     }
     return html;
   }
