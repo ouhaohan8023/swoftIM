@@ -85,7 +85,7 @@
     }
 
     .chat-content {
-      height: 300px;
+      height: 450px;
       overflow: scroll;
     }
   </style>
@@ -293,16 +293,20 @@
   function addSystemMsg(code, msg) {
     switch (code) {
       case 200:
-        $status = 'success';
+        status = 'success';
+        time = 1500;
         break;
       case 500:
-        $status = 'danger';
+        status = 'danger';
+        time = 3000;
         break;
       default:
-        $status = 'danger';
+        status = 'danger';
+        time = 3000;
     }
-    var html = '<div class="alert alert-'+$status+'" role="alert">'+msg+'</div>\n'
+    var html = '<div class="alert alert-'+status+'" role="alert">'+msg+'</div>\n'
     $('#status_msg').append(html)
+    $('.alert').hide(time)
   }
 
 
