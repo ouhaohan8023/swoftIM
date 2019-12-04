@@ -6,6 +6,7 @@ namespace App\Model\Entity;
 use Swoft\Db\Annotation\Mapping\Column;
 use Swoft\Db\Annotation\Mapping\Entity;
 use Swoft\Db\Annotation\Mapping\Id;
+use Swoft\Db\DB;
 use Swoft\Db\Eloquent\Model;
 
 
@@ -95,7 +96,7 @@ class Msg extends Model
 
 
     /**
-     * @param int $id
+     * @param  int  $id
      *
      * @return void
      */
@@ -105,7 +106,7 @@ class Msg extends Model
     }
 
     /**
-     * @param string $channelId
+     * @param  string  $channelId
      *
      * @return void
      */
@@ -115,7 +116,7 @@ class Msg extends Model
     }
 
     /**
-     * @param string $from
+     * @param  string  $from
      *
      * @return void
      */
@@ -125,7 +126,7 @@ class Msg extends Model
     }
 
     /**
-     * @param string $to
+     * @param  string  $to
      *
      * @return void
      */
@@ -135,7 +136,7 @@ class Msg extends Model
     }
 
     /**
-     * @param string $msg
+     * @param  string  $msg
      *
      * @return void
      */
@@ -145,7 +146,7 @@ class Msg extends Model
     }
 
     /**
-     * @param int $status
+     * @param  int  $status
      *
      * @return void
      */
@@ -155,7 +156,7 @@ class Msg extends Model
     }
 
     /**
-     * @param string|null $createdAt
+     * @param  string|null  $createdAt
      *
      * @return void
      */
@@ -165,7 +166,7 @@ class Msg extends Model
     }
 
     /**
-     * @param string|null $updatedAt
+     * @param  string|null  $updatedAt
      *
      * @return void
      */
@@ -242,4 +243,18 @@ class Msg extends Model
     {
 
     }
+
+    public static function getLastMsg(array $channel_id)
+    {
+        $channel_id = implode($channel_id);
+        $users = DB::select('select a.* from msg a inner join (select msg,max(id) id from msg group by channel_id) b on a.id=b.id where channel_id in (?)',
+            [$channel_id]);
+        $data = [];
+        foreach ($users as $u) {
+            $data[$u['from']] = $u;
+        }
+        return $data;
+//        return self::query()->where('channel_id', $channel_id)->groupBy('channel_id')->get()->toArray();
+    }
+
 }

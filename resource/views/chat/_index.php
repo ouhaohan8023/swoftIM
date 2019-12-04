@@ -23,9 +23,9 @@
     }
     .messenger-container {
       padding: 8px 15px 8px 13px;
-      margin: 0 0 25px 25px;
+      margin: 0 0 25px 35px;
       float: left;
-      max-width: 70%;
+      max-width: 82%;
       background: aquamarine;
       border-radius: 10px;
       min-width: 20%;
@@ -41,7 +41,7 @@
     }
     .sender .messenger-container {
       float: right;
-      margin-right: 25px;
+      margin-right: 35px;
       width: auto;
       background: gold;
       margin-left: 0px;
@@ -88,56 +88,26 @@
 <body>
 <div class="container">
   <div class="row">
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                  data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">
-            <img alt="Brand" src="/image/kotori_icon.png" width="25px">
-          </a>
-          <p class="navbar-text">当前用户数：<b id="PeopleNum" style="color: darkcyan">0</b></p>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
-            <li><a href="#">欢迎： <span class="sr-only">(current)</span><?= $user['name']; ?></a></li>
-            <li><a href="/logout">退出</a></li>
-          </ul>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
-    </nav>
-    <div class="col-sm-12">
-      <div id="status_msg">
-      </div>
+    <div class="well well-sm">当前用户数：
+      <b id="PeopleNum" style="color: darkcyan">0</b>
+    </div>
+    <div id="status_msg">
     </div>
   </div>
   <div class="row">
-    <div class="col-sm-12">
-      <div class="panel panel-default">
-        <div class="panel-body" id="msg">
+    <div class="panel panel-default">
+      <div class="panel-body" id="msg">
 
-        </div>
       </div>
     </div>
   </div>
 
 
   <div class="row">
-    <div class="col-sm-12">
-      <div class="form-group">
-        <textarea class="form-control" rows="3" id="text"></textarea>
-      </div>
-      <button type="submit" class="btn btn-success right" onclick="song()">发送</button>
+    <div class="form-group">
+      <textarea class="form-control" rows="3" id="text"></textarea>
     </div>
-
+    <button type="submit" class="btn btn-success right" onclick="song()">发送</button>
   </div>
 
 </div>

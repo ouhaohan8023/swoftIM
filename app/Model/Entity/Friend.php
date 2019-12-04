@@ -3,7 +3,6 @@
 
 namespace App\Model\Entity;
 
-use Swoft\Console\Helper\Show;
 use Swoft\Db\Annotation\Mapping\Column;
 use Swoft\Db\Annotation\Mapping\Entity;
 use Swoft\Db\Annotation\Mapping\Id;
@@ -11,14 +10,14 @@ use Swoft\Db\Eloquent\Model;
 
 
 /**
- * 聊天频道
- * Class Channel
+ * 好友关系表
+ * Class Friend
  *
  * @since 2.0
  *
- * @Entity(table="channel")
+ * @Entity(table="friend")
  */
-class Channel extends Model
+class Friend extends Model
 {
     /**
      * primary
@@ -30,22 +29,22 @@ class Channel extends Model
     private $id;
 
     /**
-     * 频道识别码
+     * 用户id，用户b为用户a的好友
      *
-     * @Column()
-     *
-     * @var string
-     */
-    private $number;
-
-    /**
-     * 用户
-     *
-     * @Column(name="user_id", prop="userId")
+     * @Column(name="user_id_a", prop="userIdA")
      *
      * @var int
      */
-    private $userId;
+    private $userIdA;
+
+    /**
+     * 用户id
+     *
+     * @Column(name="user_id_b", prop="userIdB")
+     *
+     * @var int
+     */
+    private $userIdB;
 
     /**
      *
@@ -77,23 +76,23 @@ class Channel extends Model
     }
 
     /**
-     * @param string $number
+     * @param int $userIdA
      *
      * @return void
      */
-    public function setNumber(string $number): void
+    public function setUserIdA(int $userIdA): void
     {
-        $this->number = $number;
+        $this->userIdA = $userIdA;
     }
 
     /**
-     * @param int $userId
+     * @param int $userIdB
      *
      * @return void
      */
-    public function setUserId(int $userId): void
+    public function setUserIdB(int $userIdB): void
     {
-        $this->userId = $userId;
+        $this->userIdB = $userIdB;
     }
 
     /**
@@ -125,19 +124,19 @@ class Channel extends Model
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getNumber(): ?string
+    public function getUserIdA(): ?int
     {
-        return $this->number;
+        return $this->userIdA;
     }
 
     /**
      * @return int
      */
-    public function getUserId(): ?int
+    public function getUserIdB(): ?int
     {
-        return $this->userId;
+        return $this->userIdB;
     }
 
     /**
@@ -156,41 +155,10 @@ class Channel extends Model
         return $this->updatedAt;
     }
 
-    public static function startNewChannel(array $user_group)
+    public static function getFriendsByUserId($uid)
     {
-        $number = self::getChannelNumber($user_group);
-        $data = [];
-        foreach ($user_group as $k => $v) {
-            $data[$k]['number'] = $number;
-            $data[$k]['user_id'] = $v;
-        }
-        Show::aList($data,'批量');
-
-        self::insert($data);
-        return $number;
-    }
-
-    public static function findUserGroup($channel_id)
-    {
-        $data = self::query()->where('number',$channel_id);
-        if (!$data->exists()) {
-            return false;
-        } else {
-            return $data->pluck('user_id');
-        }
-    }
-
-    public static function getChannelNumber(array $arr)
-    {
-        asort($arr);
-        $str = implode($arr,'|');
-        return md5($str);
-    }
-
-    public static function getChannels($uid) {
-        return self::query()
-            ->where('user_id',$uid)
-            ->pluck('number')
-            ->toArray();
+        return self::query()->where('user_id_a',$uid)
+            ->leftJoin('user', 'friend.user_id_b', '=', 'user.id')
+            ->get()->toArray();
     }
 }

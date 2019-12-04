@@ -55,7 +55,11 @@ return [
         'setting' => [
             'task_worker_num'       => 12,
             'task_enable_coroutine' => true,
-            'worker_num'            => 6
+            'worker_num'            => 6,
+            // enable static handle
+            'enable_static_handler'    => true,
+            // swoole v4.4.0以下版本, 此处必须为绝对路径
+            'document_root'            => alias('@base/public'),
         ]
     ],
     'httpDispatcher'    => [
@@ -63,6 +67,7 @@ return [
         'middlewares'      => [
             \App\Http\Middleware\FavIconMiddleware::class,
             \Swoft\Http\Session\SessionMiddleware::class,
+            \App\Http\Middleware\AuthMiddleware::class,
             // \Swoft\Whoops\WhoopsMiddleware::class,
             // Allow use @View tag
             \Swoft\View\Middleware\ViewMiddleware::class,
@@ -147,12 +152,16 @@ return [
         'setting' => [
             'log_file' => alias('@runtime/swoole.log'),
             'dispatch_mode'=>5,
+            // enable static handle
+            'enable_static_handler'    => true,
+            // swoole v4.4.0以下版本, 此处必须为绝对路径
+            'document_root'            => alias('@base/public'),
         ],
     ],
     /** @see \Swoft\WebSocket\Server\WsMessageDispatcher */
     'wsMsgDispatcher' => [
         'middlewares' => [
-            \App\WebSocket\Middleware\GlobalWsMiddleware::class
+            \App\WebSocket\Middleware\GlobalWsMiddleware::class,
         ],
     ],
     /** @see \Swoft\Tcp\Server\TcpServer */
@@ -174,5 +183,14 @@ return [
     ],
     'cliRouter'         => [
         // 'disabledGroups' => ['demo', 'test'],
-    ]
+    ],
+    'sessionManager' => [
+        'class'   => \Swoft\Http\Session\SessionManager::class,
+        'handler' => bean('sessionHandler'),
+    ],
+    'sessionHandler' => [
+        'class'    => \Swoft\Http\Session\Handler\FileHandler::class,
+        // For storage session files
+        'savePath' => alias('@runtime/sessions')
+    ],
 ];

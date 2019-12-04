@@ -3,6 +3,7 @@
 namespace App\Http\Controller;
 
 use App\Model\Entity\Channel;
+use App\Model\Entity\User;
 use App\Model\Entity\UserTokenFd;
 use Swoft;
 use Swoft\Http\Message\Response;
@@ -10,6 +11,7 @@ use Swoft\Http\Message\ContentType;
 use Swoft\Http\Server\Annotation\Mapping\Controller;
 use Swoft\Http\Server\Annotation\Mapping\RequestMapping;
 use Swoft\Http\Server\Annotation\Mapping\RequestMethod;
+use Swoft\Http\Session\HttpSession;
 
 // use Swoft\Http\Message\Response;
 
@@ -29,7 +31,9 @@ class ChatController
     public function channel(int $uid): Response
     {
         $response = \context()->getResponse();
-        $data = [1, $uid];
+        $user = HttpSession::current()->get(User::SESSION_KEY);
+
+        $data = [$user['id'], $uid];
         $number = Channel::getChannelNumber($data);
         if (!Channel::findUserGroup($number)) {
             Channel::startNewChannel($data);
@@ -52,7 +56,9 @@ class ChatController
             return view('chat/forbidden');
         } else {
             $token = UserTokenFd::createNewToken($channel_id, $uid);
-            return view('chat/index', ['token' => $token,'channel_id'=>$channel_id]);
+            $user = HttpSession::current()->get(User::SESSION_KEY);
+
+            return view('chat/index', ['token' => $token,'channel_id'=>$channel_id,'user'=>$user]);
         }
     }
 
