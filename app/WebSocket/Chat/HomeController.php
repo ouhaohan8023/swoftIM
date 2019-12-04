@@ -11,6 +11,7 @@
 namespace App\WebSocket\Chat;
 
 use App\Model\Entity\Msg;
+use App\Model\Entity\User;
 use App\Model\Entity\UserTokenFd;
 use Swoft\Session\Session;
 use Swoft\WebSocket\Server\Annotation\Mapping\MessageMapping;
@@ -81,6 +82,7 @@ class HomeController
                     $ctx['msg'] = $msg['msg'];
                     $ctx['me'] = $token_user_id==$user_id?true:false;
                     $ctx['time'] = date('Y-m-d H:i:s');
+                    $ctx['avatar'] = User::getAvatarByCache($user_id);
                     $status = server()->sendTo($f,json_encode($ctx));
                 } else {
                     $status = false;

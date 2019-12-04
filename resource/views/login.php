@@ -393,6 +393,15 @@
 				}
 			});
 
+
+            document.onkeydown = function (e) {
+                //捕捉回车事件
+                var ev = (typeof event != 'undefined') ? window.event : e;
+                if (ev.keyCode == 13) {
+                    document.form1.submit();
+                }
+            };
+
 		});
 	</script>
 </body>

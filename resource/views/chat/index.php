@@ -83,6 +83,11 @@
     .msg-icon-right {
       float: right;
     }
+
+    .chat-content {
+      height: 300px;
+      overflow: scroll;
+    }
   </style>
 </head>
 <body>
@@ -119,8 +124,8 @@
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-sm-12">
+  <div class="row chat-content" id="chat-container">
+    <div class="col-sm-12 col-md-12">
       <div class="panel panel-default">
         <div class="panel-body" id="msg">
 
@@ -130,12 +135,12 @@
   </div>
 
 
-  <div class="row">
-    <div class="col-sm-12">
+  <div class="row bottom-input">
+    <div class="col-sm-12 col-md-12">
       <div class="form-group">
-        <textarea class="form-control" rows="3" id="text"></textarea>
+        <textarea class="form-control" rows="1" id="text"></textarea>
       </div>
-      <button type="submit" class="btn btn-success right" onclick="song()">发送</button>
+      <button type="submit" class="btn btn-success btn-block" onclick="song()">发送</button>
     </div>
 
   </div>
@@ -186,30 +191,7 @@
     websocket.send(JSON.stringify(data));
   };
 
-  function song() {
-    var text = document.getElementById('text').value;
-    text_without_br=text.replace(/\n/g,"")
-    console.log(text_without_br,text_without_br !== '',text_without_br !== null,1)
-    if (text_without_br && text_without_br !== '' && text_without_br !== null ) {
-      document.getElementById('text').value = '';
-      text=text.replace(/\n/g,"<br/>")
 
-      //向服务器发送数据
-      var msg = {
-        "cmd": "home.echo",
-        "data": {
-          "token": "<?= $token;?>",
-          "msg": text,
-          'channel_id': "<?= $channel_id;?>"
-        },
-        "ext": {
-          "ip": '127.0.0.1'
-        }
-      }
-      console.log(JSON.stringify(msg))
-      websocket.send(JSON.stringify(msg));
-    }
-  }
 
   //监听连接关闭
   websocket.onclose = function (evt) {
@@ -227,12 +209,13 @@
   //onmessage 监听服务器数据推送
   websocket.onmessage = function (evt) {
     if (evt.data) {
-      console.log(evt.data,123)
+      // console.log(evt.data,123)
       var jsonData = JSON.parse(evt.data);
-      console.log(jsonData,1);
+      // console.log(jsonData,1);
       if (jsonData.type === 'chat') {
         var name = jsonData.me === true ? '我：' : '用户' + jsonData.user_id + "："
-        msg.innerHTML += addMsg(name, jsonData.msg, jsonData.time, jsonData.me) + "<br/>"
+        msg.innerHTML += addMsg(name, jsonData.msg, jsonData.time, jsonData.avatar, jsonData.me) + "<br/>"
+        jump()
       } else if (jsonData.type === 'number') {
         PeopleNum.innerHTML = jsonData.msg;
       } else {
@@ -246,6 +229,32 @@
   };
 </script>
 <script>
+  function song() {
+    var text = document.getElementById('text').value;
+    text_without_br=text.replace(/\n/g,"")
+    // console.log(text_without_br,text_without_br !== '',text_without_br !== null,1)
+    if (text_without_br && text_without_br !== '' && text_without_br !== null ) {
+      document.getElementById('text').value = '';
+      text=text.replace(/\n/g,"<br/>")
+
+      //向服务器发送数据
+      var msg = {
+        "cmd": "home.echo",
+        "data": {
+          "token": "<?= $token;?>",
+          "msg": text,
+          'channel_id': "<?= $channel_id;?>"
+        },
+        "ext": {
+          "ip": '127.0.0.1'
+        }
+      }
+      // console.log(JSON.stringify(msg))
+      websocket.send(JSON.stringify(msg));
+    }
+  }
+
+
   function isJsonString(str) {
     try {
       if (typeof JSON.parse(str) == "object") {
@@ -256,11 +265,11 @@
     return false;
   }
 
-  function addMsg(name, content, time, me) {
+  function addMsg(name, content, time, avatar, me) {
     if (me) {
       var html = '<div class="msg-list sender">\n' +
         '          <div class="msg-icon-right">\n' +
-        '            <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PCEtLQpTb3VyY2UgVVJMOiBob2xkZXIuanMvNjR4NjQKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNmViNjRhN2ZiMSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE2ZWI2NGE3ZmIxIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSIxMy4wNzgxMjUiIHk9IjM2LjM2ODc1Ij42NHg2NDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==">\n' +
+        '            <img src="<?= $user['avatar'];?>" width="48px">\n' +
         '          </div>\n' +
         '          <div class="messenger-container">\n' +
         '            <p>'+ content +'</p>\n' +
@@ -270,7 +279,7 @@
     } else {
       var html = '<div class="msg-list">\n' +
         '          <div class="msg-icon">\n' +
-        '            <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PCEtLQpTb3VyY2UgVVJMOiBob2xkZXIuanMvNjR4NjQKQ3JlYXRlZCB3aXRoIEhvbGRlci5qcyAyLjYuMC4KTGVhcm4gbW9yZSBhdCBodHRwOi8vaG9sZGVyanMuY29tCihjKSAyMDEyLTIwMTUgSXZhbiBNYWxvcGluc2t5IC0gaHR0cDovL2ltc2t5LmNvCi0tPjxkZWZzPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+PCFbQ0RBVEFbI2hvbGRlcl8xNmViNjRhN2ZiMSB0ZXh0IHsgZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQgfSBdXT48L3N0eWxlPjwvZGVmcz48ZyBpZD0iaG9sZGVyXzE2ZWI2NGE3ZmIxIj48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiNFRUVFRUUiLz48Zz48dGV4dCB4PSIxMy4wNzgxMjUiIHk9IjM2LjM2ODc1Ij42NHg2NDwvdGV4dD48L2c+PC9nPjwvc3ZnPg==">\n' +
+        '            <img src="'+avatar+'" width="48px">\n' +
         '          </div>\n' +
         '          <div class="messenger-container">\n' +
         '            <p>' + content + '</p>\n' +
@@ -294,6 +303,13 @@
     }
     var html = '<div class="alert alert-'+$status+'" role="alert">'+msg+'</div>\n'
     $('#status_msg').append(html)
+  }
+
+
+  function jump() {
+    var liBox = $('.msg-list').last();
+    var position = liBox.position()
+    $("#chat-container").scrollTop(position.top)
   }
 
   // window.onbeforeunload = function (event) {

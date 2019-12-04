@@ -281,4 +281,16 @@ class User extends Model
         return false;
     }
 
+    public static function getAvatarByCache($user_id)
+    {
+        $redis = Redis::get('user_avatar_'.$user_id);
+        if ($redis) {
+            return $redis;
+        } else {
+            $avatar = User::find($user_id)->getAvatar();
+            Redis::set('user_avatar_'.$user_id,$avatar,500);
+            return $avatar;
+        }
+    }
+
 }
