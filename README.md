@@ -67,8 +67,8 @@ $ php bin/swoft migrate:up
 ##### 添加模拟数据，也可以自己创建，主要是user用户表和friend好友关系表
 ```sql
 # 添加用户
-INSERT INTO `user`(`id`, `name`, `username`, `password`, `avatar`, `online`, `created_at`, `updated_at`) VALUES (1, '程心', 'greg001', '2bbff72ba88f1c6a17f43819b09806ac', '/image/avatar2.jpg', 0, NULL, NULL);
-INSERT INTO `user`(`id`, `name`, `username`, `password`, `avatar`, `online`, `created_at`, `updated_at`) VALUES (2, '三体', 'oscar001', '2bbff72ba88f1c6a17f43819b09806ac', '/image/avatar1.jpg', 0, NULL, NULL);
+INSERT INTO `user`(`id`, `name`, `username`, `password`, `avatar`, `online`, `created_at`, `updated_at`) VALUES (1, '程心', 'user1', '2bbff72ba88f1c6a17f43819b09806ac', '/image/avatar2.jpg', 0, NULL, NULL);
+INSERT INTO `user`(`id`, `name`, `username`, `password`, `avatar`, `online`, `created_at`, `updated_at`) VALUES (2, '三体', 'user2', '2bbff72ba88f1c6a17f43819b09806ac', '/image/avatar1.jpg', 0, NULL, NULL);
 
 # 添加好友关系
 INSERT INTO `friend`(`id`, `user_id_a`, `user_id_b`, `created_at`, `updated_at`) VALUES (1, 1, 2, NULL, NULL);
@@ -87,6 +87,10 @@ $ php swoftcli.phar run -c ws:start
 ##### 访问对应地址，这里假设ip为`192.168.10.10`，端口为`18308`，所以访问地址为
 ```bash
 http://192.168.10.10:18308/login
+# 账号：user1
+# 密码123123
+# 账号：user2
+# 密码123123
 ```
 ##### 注意，要在本机实现两个客户端间的通讯，需要使用两个浏览器，或者开启一个Chrome的匿名模式
 
