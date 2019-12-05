@@ -43,7 +43,7 @@
 ## 安装
 ##### Composer 创建项目
 ```bash
-$ composer 
+$ composer create-project ohhink/swoft-im 
 ```
 ##### 将.env.example复制成.env并配置对应参数
 ```bash
