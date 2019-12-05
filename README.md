@@ -31,8 +31,6 @@
 #### 聊天页面
 ##### 用户：程心，好友：三体
 ![登陆首页](http://pic.ohh.ink/swoft/7.png)
-##### 用户：三体，好友：程心
-![登陆首页](http://pic.ohh.ink/swoft/6.png)
 
 ## 功能
 
@@ -65,6 +63,17 @@ DATABASE_CHARSET=utf8mb4
 ##### 运行数据库迁移命令
 ```bash
 $ php bin/swoft migrate:up
+```
+##### 添加模拟数据，也可以自己创建，主要是user用户表和friend好友关系表
+```sql
+# 添加用户
+INSERT INTO `user`(`id`, `name`, `username`, `password`, `avatar`, `online`, `created_at`, `updated_at`) VALUES (1, '程心', 'greg001', '2bbff72ba88f1c6a17f43819b09806ac', '/image/avatar2.jpg', 0, NULL, NULL);
+INSERT INTO `user`(`id`, `name`, `username`, `password`, `avatar`, `online`, `created_at`, `updated_at`) VALUES (2, '三体', 'oscar001', '2bbff72ba88f1c6a17f43819b09806ac', '/image/avatar1.jpg', 0, NULL, NULL);
+
+# 添加好友关系
+INSERT INTO `friend`(`id`, `user_id_a`, `user_id_b`, `created_at`, `updated_at`) VALUES (1, 1, 2, NULL, NULL);
+INSERT INTO `friend`(`id`, `user_id_a`, `user_id_b`, `created_at`, `updated_at`) VALUES (2, 2, 1, NULL, NULL);
+
 ```
 ##### 启动WebSocket和Http
 ```bash
