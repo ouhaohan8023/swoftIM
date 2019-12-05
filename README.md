@@ -1,159 +1,94 @@
-![swoft-logo](https://raw.githubusercontent.com/swoft-cloud/swoft/master/public/image/swoft-logo-mdl.png)
+## 基于Swoft构建的Web聊天应用
 
-[![Latest Stable Version](http://img.shields.io/packagist/v/swoft/swoft.svg)](https://packagist.org/packages/swoft/swoft)
-[![Build Status](https://travis-ci.org/swoft-cloud/swoft.svg?branch=master)](https://travis-ci.org/swoft-cloud/swoft)
-[![Docker Build Status](https://img.shields.io/docker/build/swoft/alphp.svg)](https://hub.docker.com/r/swoft/swoft/)
 [![Php Version](https://img.shields.io/badge/php-%3E=7.1-brightgreen.svg?maxAge=2592000)](https://secure.php.net/)
 [![Swoole Version](https://img.shields.io/badge/swoole-%3E=4.4.1-brightgreen.svg?maxAge=2592000)](https://github.com/swoole/swoole-src)
-[![Swoft Doc](https://img.shields.io/badge/docs-passing-green.svg?maxAge=2592000)](https://www.swoft.org/docs)
-[![Swoft License](https://img.shields.io/hexpm/l/plug.svg?maxAge=2592000)](https://github.com/swoft-cloud/swoft/blob/master/LICENSE)
-[![Gitter](https://img.shields.io/gitter/room/swoft-cloud/swoft.svg)](https://gitter.im/swoft-cloud/community)
 
-![start-http-server](https://raw.githubusercontent.com/swoft-cloud/swoft/master/public/image/start-http-server.jpg)
+![start-http-server](http://pic.ohh.ink/swoft/8.png)
 
-PHP microservice coroutine framework
 
-> **[中文说明](README.zh-CN.md)**
+## 简介
 
-## Introduction
+本项目是基于Swoft的练手项目，主要使用框架中的Http，WebSocket构建，用于新手熟悉Swoft框架。
 
-Swoft is a PHP microservices coroutine framework based on the Swoole extension. Like Go, Swoft has a built-in coroutine web server and a common coroutine client and is resident in memory, independent of traditional PHP-FPM. There are similar Go language operations, similar to the Spring Cloud framework flexible annotations, powerful global dependency injection container, comprehensive service governance, flexible and powerful AOP, standard PSR specification implementation and so on.
-
-Through three years of accumulation and direction exploration, Swoft has made Swoft the Spring Cloud in the PHP world, which is the best choice for PHP's high-performance framework and microservices management.
-
-## Feature
-
-- Built-in high performance network server(Http/Websocket/RPC/TCP)
-- Flexible componentization
-- Flexible annotation function
-- Diversified command terminal(Console)
-- Powerful Aspect Oriented Programming（AOP）
-- Perfect Container management、Dependency Injection (DI)
-- Flexible event mechanism
-- Implementation of HTTP message based on PSR-7
-- Event Manager Based on PSR-14
-- Middleware based on PSR-15
-- Internationalization(i18n) support
-- Simple and efficient parameter validator
-- High performance connection pool(Mysql/Redis/RPC)，Automatic reconnection 
-- Database is highly compatible Laravel
-- Cache Redis highly compatible Laravel
-- Efficient task processing
-- Efficient seconds corntab
-- Process pool
-- Flexible exception handling
-- Powerful log system
-- Service registration & discovery
-- Service breaker
-- Service restrictions
-- Service fallback
-- Configuration Center
-- Apollo
-- Consul
-
-## Document
-
-- [中文文档](https://www.swoft.org/docs)
-- [English](https://en.swoft.org/docs)
-
-## Discuss
-
-- Forum https://github.com/swoft-cloud/forum/issues
-- Gitter.im https://gitter.im/swoft-cloud/community
-- Reddit https://www.reddit.com/r/swoft/
-- QQ Group1: 548173319      
-- QQ Group2: 778656850
-
-## Requirement
+## 环境要求
 
 - [PHP 7.1+](https://github.com/php/php-src/releases)
 - [Swoole 4.3.4+](https://github.com/swoole/swoole-src/releases)
 - [Composer](https://getcomposer.org/)
+- [MYSQL 5.7.24+](https://www.mysql.com/cn/downloads/)
+- [Redis](https://redis.io/)
 
-## Install
+## 效果展示
+#### 很有意思的登录页
+![登录页](http://pic.ohh.ink/swoft/1.png)
 
-### Composer
+#### 登陆首页
+##### 用户：程心，好友：三体
+![登陆首页](http://pic.ohh.ink/swoft/4.png)
+##### 用户：三体，好友：程心
+![登陆首页](http://pic.ohh.ink/swoft/5.png)
 
+#### 聊天页面
+##### 用户：程心，好友：三体
+![登陆首页](http://pic.ohh.ink/swoft/7.png)
+##### 用户：三体，好友：程心
+![登陆首页](http://pic.ohh.ink/swoft/6.png)
+
+## 功能
+
+- 用户登陆退出功能（todo 注册功能）
+- 登陆认证中间件
+- 同一用户，打开多个窗口，可以实现聊天记录同步接受，即支持多端登陆。
+- 好友列表（todo 新增好友功能）
+- WebSocket端已支持群聊功能（todo Http端需要做逻辑和界面处理）
+
+## 安装
+##### Composer 创建项目
 ```bash
-composer create-project swoft/swoft swoft
+$ composer 
+```
+##### 将.env.example复制成.env并配置对应参数
+```bash
+APP_DEBUG=0
+SWOFT_DEBUG=0
+
+REDIS_ONLINE_USER=online-user
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+
+DATABASE_HOST=192.168.10.10
+DATABASE_USERNAME=homestead
+DATABASE_PASSWORD=secret
+DATABASE_TABLE=swoft
+DATABASE_CHARSET=utf8mb4
+```
+##### 运行数据库迁移命令
+```bash
+$ php bin/swoft migrate:up
+```
+##### 启动WebSocket和Http
+```bash
+$ php bin/swoft ws:start
+
+# 热更新启动，适合开发使用
+$ php swoftcli.phar run -c ws:start
 ```
 
-## Start
-
-- Http Server
-
+## 使用
+##### 访问对应地址，这里假设ip为`192.168.10.10`，端口为`18308`，所以访问地址为
 ```bash
-[root@swoft swoft]# php bin/swoft http:start
+http://192.168.10.10:18308/login
 ```
+##### 注意，要在本机实现两个客户端间的通讯，需要使用两个浏览器，或者开启一个Chrome的匿名模式
 
-- WebSocket Server
+## 维护者
 
-```bash
-[root@swoft swoft]# php bin/swoft ws:start
-```
+[@OhhInk](https://github.com/ouhaohan8023).
 
-- RPC Server
+## 如何贡献
 
-```bash
-[root@swoft swoft]# php bin/swoft rpc:start
-```
+非常欢迎你的加入! 有任何问题或者想要贡献代码，请提交 issue
 
-- TCP Server
+## 使用许可
 
-```bash
-[root@swoft swoft]# php bin/swoft tcp:start
-```
-
-- Process Pool
-
-```bash
-[root@swoft swoft]# php bin/swoft process:start
-```
-
-## Core Components
-
-Component Name   | Packagist Version
---------------------|---------------------
-swoft-annotation          |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/annotation.svg)](https://packagist.org/packages/swoft/annotation)
-swoft-config              |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/config.svg)](https://packagist.org/packages/swoft/config)
-swoft-db                  |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/db.svg)](https://packagist.org/packages/swoft/db)
-swoft-framework           |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/framework.svg)](https://packagist.org/packages/swoft/framework)
-swoft-i18n                |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/i18n.svg)](https://packagist.org/packages/swoft/i18n)
-swoft-proxy               |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/proxy.svg)](https://packagist.org/packages/swoft/proxy)
-swoft-rpc-client          |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/rpc-client.svg)](https://packagist.org/packages/swoft/rpc-client)
-swoft-stdlib              |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/stdlib.svg)](https://packagist.org/packages/swoft/stdlib)
-swoft-tcp-server          |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/tcp-server.svg)](https://packagist.org/packages/swoft/tcp-server)
-swoft-aop                 |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/aop.svg)](https://packagist.org/packages/swoft/aop)
-swoft-connection-pool     |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/connection-pool.svg)](https://packagist.org/packages/swoft/connection-pool)
-swoft-error               |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/error.svg)](https://packagist.org/packages/swoft/error)
-swoft-http-message        |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/http-message.svg)](https://packagist.org/packages/swoft/http-message)
-swoft-log                 |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/log.svg)](https://packagist.org/packages/swoft/log)
-swoft-redis               |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/redis.svg)](https://packagist.org/packages/swoft/redis)
-swoft-rpc-server          |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/rpc-server.svg)](https://packagist.org/packages/swoft/rpc-server)
-swoft-task                |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/task.svg)](https://packagist.org/packages/swoft/task)
-swoft-validator           |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/validator.svg)](https://packagist.org/packages/swoft/validator)
-swoft-bean                |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/bean.svg)](https://packagist.org/packages/swoft/bean)
-swoft-console             |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/console.svg)](https://packagist.org/packages/swoft/console)
-swoft-event               |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/event.svg)](https://packagist.org/packages/swoft/event)
-swoft-http-server         |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/http-server.svg)](https://packagist.org/packages/swoft/http-server)
-swoft-process             |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/process.svg)](https://packagist.org/packages/swoft/process)
-swoft-rpc                 |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/rpc.svg)](https://packagist.org/packages/swoft/rpc)
-swoft-server              |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/server.svg)](https://packagist.org/packages/swoft/server)
-swoft-tcp                 |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/tcp.svg)](https://packagist.org/packages/swoft/tcp)
-swoft-websocket-server    |   [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/websocket-server.svg)](https://packagist.org/packages/swoft/websocket-server)
-
-## Extension Components
-
-Component Name   | Packagist Version
------------------|---------------------
-swoft-apollo  | [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/apollo.svg)](https://packagist.org/packages/swoft/apollo)
-swoft-breaker | [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/breaker.svg)](https://packagist.org/packages/swoft/breaker)
-swoft-crontab | [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/crontab.svg)](https://packagist.org/packages/swoft/crontab)
-swoft-consul  | [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/consul.svg)](https://packagist.org/packages/swoft/consul)
-swoft-limiter | [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/limiter.svg)](https://packagist.org/packages/swoft/limiter)
-swoft-view    | [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/view.svg)](https://packagist.org/packages/swoft/view)
-swoft-whoops  | [![Latest Stable Version](http://img.shields.io/packagist/v/swoft/whoops.svg)](https://packagist.org/packages/swoft/whoops)
-
-## License
-
-Swoft is an open-source software licensed under the [LICENSE](LICENSE)
+[MIT](LICENSE) © OhhInk

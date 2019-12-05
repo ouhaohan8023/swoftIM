@@ -78,10 +78,10 @@ return [
     ],
     'db'                => [
         'class'    => Database::class,
-        'dsn'      => 'mysql:dbname=swoft;host=192.168.10.10',
-        'username' => 'homestead',
-        'password' => 'secret',
-        'charset' => 'utf8mb4',
+        'dsn'      => 'mysql:dbname='.env('DATABASE_TABLE','swoft').';host='.env('DATABASE_HOST','192.168.10.10'),
+        'username' => env('DATABASE_USERNAME','homestead'),
+        'password' => env('DATABASE_PASSWORD','secret'),
+        'charset' => env('DATABASE_CHARSET','utf8mb4'),
     ],
     'db2'               => [
         'class'      => Database::class,
@@ -109,8 +109,8 @@ return [
     ],
     'redis'             => [
         'class'    => RedisDb::class,
-        'host'     => '127.0.0.1',
-        'port'     => 6379,
+        'host'     => env('REDIS_HOST','127.0.0.1'),
+        'port'     => env('REDIS_PORT',6379),
         'database' => 0,
         'option'   => [
             'prefix' => 'swoft:'
